@@ -13,15 +13,26 @@ Example: GET http://localhost:3000/files
 */
 
 const express = require('express');
-
+const fs = require('fs');
+const path = require('path')
+const port = 3000;
 const app = express();
 
-const greet = () => {
-    console.log("hello world");
-};
-
-app.get('/',(res,req) => {
-    res.setTimeout(3000,greet());
+app.get('/',(req, res) => {
+    res.send("Welcome to the File Handling Server");
 });
+
+
+// File API endpoint
+
+app.get('/files',(req, res) => {
+    const directorypath = path.join(__dirname, 'files');
+    fs.readdir(directorypath, (err, files) => {
+        if(err) {return res.status(500).send('unable to scan the directory: '+err)}
+
+        res.json(files);
+    });
+});
+
 
 app.listen(3000);
