@@ -11,3 +11,17 @@ Example: GET http://localhost:3000/files
     Example: GET http://localhost:3000/file/example.txt
 - For any other route not defined in the server return 404
 */
+
+const express = require('express');
+
+const app = express();
+
+const greet = () => {
+    console.log("hello world");
+};
+
+app.get('/',(res,req) => {
+    res.setTimeout(3000,greet());
+});
+
+app.listen(3000);
