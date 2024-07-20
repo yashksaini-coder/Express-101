@@ -19,6 +19,8 @@ const users = [{
     }]
 }];
 
+app.use(express.json());
+
 // Get ==> Fetch data from the server
 
 app.get('/', function(req, res){
@@ -39,9 +41,16 @@ app.get('/', function(req, res){
 })
 
 // POST ==> Send data to the server
-app.post('/', function(req,res){
 
+app.post("/", function(req, res) {
+    
+    const isHealthy = req.body.isHealthy;
+    users[0].kidney.push({
+        healthy: isHealthy
+    })
+    res.json({
+        msg: "Done!"
+    })
 })
-
 
 app.listen(3000);
