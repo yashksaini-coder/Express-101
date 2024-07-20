@@ -34,5 +34,15 @@ app.get('/files',(req, res) => {
     });
 });
 
+app.get('/files/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, 'files', filename);
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).send('Unable to read file: ' + err);
+        }
+        res.send(data);
+    });
+});
 
 app.listen(3000);
