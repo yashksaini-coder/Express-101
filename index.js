@@ -20,8 +20,10 @@ const app = express();
 // 400 ==> Bad Request
 
 // req, res ==> request and response objects
-app.get("/", function(req, res){
-    console.log("hi there!");
-})
+
+app.get('/', (req, res) => {
+    // res.send('Hello World');
+    throw new Error('This is an error');
+});
 
 app.listen(3000);
