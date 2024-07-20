@@ -20,10 +20,25 @@ const app = express();
 // 400 ==> Bad Request
 
 // req, res ==> request and response objects
-
 app.get('/', (req, res) => {
-    // res.send('Hello World');
-    throw new Error('This is an error');
+    res.send("1.About Us, 2.Contact Us, 3.User ID, 4.User ID and Name");
 });
+
+app.get('/about', (req, res) => {
+    res.send('About Us');
+});
+
+app.get('/contact', (req, res) => {
+    res.send('Contact Us');
+});
+
+app.get('/user/:id', (req, res) => {
+    res.send('User ID: ' + req.params.id);
+});
+
+app.get('/user/:id/:name', (req, res) => {
+    res.send('User ID: ' + req.params.id + ' Name: ' + req.params.name);
+});
+
 
 app.listen(3000);
