@@ -5,4 +5,10 @@ const express = require('express');
 
 const app = express();
 
+//Adding a route
+
+app.get("/", function(req, res){
+    res.send('Hello World');
+})
+
 app.listen(3000);
