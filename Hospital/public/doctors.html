@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Doctors - Hospital Management System</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Hospital Management System</h1>
+            <ul class="nav-links">
+                <li><a href="/home.html">Home</a></li>
+                <li><a href="/check-up.html">Health Check-up</a></li>
+                <li><a href="/doctors.html" class="active">Doctors</a></li>
+                <li><a href="/appointments.html">Appointments</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="message"></div>
+
+        <section class="doctors-search card">
+            <h2>Find a Doctor</h2>
+            <div class="search-filters">
+                <div class="form-group">
+                    <input type="text" id="searchName" placeholder="Search by name">
+                </div>
+                <div class="form-group">
+                    <select id="specialization">
+                        <option value="">All Specializations</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="neurology">Neurology</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="orthopedics">Orthopedics</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="filterDoctors()">Search</button>
+            </div>
+        </section>
+
+        <section class="doctors-list card">
+            <h2>Our Medical Team</h2>
+            <div id="doctorsList" class="doctors-grid">
+                <!-- Doctors will be loaded dynamically -->
+            </div>
+        </section>
+
+        <div id="appointmentModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Book Appointment</h2>
+                <form id="appointmentForm">
+                    <input type="hidden" id="doctorId" name="doctorId">
+                    <div class="form-group">
+                        <label for="appointmentDate">Preferred Date</label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Preferred Time</label>
+                        <select id="appointmentTime" name="appointmentTime" required>
+                            <option value="">Select Time</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Reason for Visit</label>
+                        <textarea id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Book Appointment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+    <script>
+        // Filter doctors based on search criteria
+        function filterDoctors() {
+            const name = document.getElementById('searchName').value.toLowerCase();
+            const specialization = document.getElementById('specialization').value.toLowerCase();
+            const doctors = document.querySelectorAll('.doctor-card');
+
+            doctors.forEach(doctor => {
+                const doctorName = doctor.querySelector('h3').textContent.toLowerCase();
+                const doctorSpecialization = doctor.querySelector('p').textContent.toLowerCase();
+                
+                const nameMatch = doctorName.includes(name);
+                const specializationMatch = !specialization || doctorSpecialization.includes(specialization);
+
+                doctor.style.display = (nameMatch && specializationMatch) ? 'block' : 'none';
+            });
+        }
+
+        // Modal functionality
+        const modal = document.getElementById('appointmentModal');
+        const closeBtn = document.querySelector('.close');
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Load doctors on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDoctors();
+        });
+    </script>
+</body>
+</html>

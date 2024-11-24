@@ -1,60 +1,87 @@
-const express = require('express');
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import { errorHandler } from './middleware/errorHandler.js';
+import { patientSchema } from './schemas/patientSchema.js';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
 
+// Middleware
+app.use(express.json());
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.static(join(__dirname, 'public')));
+
+// Sample data (replace with database in production)
+const doctors = [
+    { id: '1', name: 'Dr. John Smith', specialization: 'Cardiology' },
+    { id: '2', name: 'Dr. Sarah Johnson', specialization: 'Pediatrics' },
+    { id: '3', name: 'Dr. Michael Brown', specialization: 'Neurology' }
+];
+
+const appointments = [];
+
+// Routes
 app.get('/', (req, res) => {
-    const menu = `
-        <h1>Welcome to the Hospital</h1>
-        <ul>
-            <li><a href="/check-up">Health-Checkup</a></li>
-            <li><a href="/doctors">Doctors</a></li>
-            <li><a href="/patients">Patients</a></li>
-            <li><a href="/appointments">Appointments</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="/about">About US</a></li>
-        </ul>
-    `;
-    res.send(menu);
+    res.sendFile(join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/check-up', (req, res) => {
-    const username = req.headers.username;
-    const password = req.headers.password;
-    
-    if (!username) {
-        return res.status(401).send('Username is required');
+app.post('/check-up', async (req, res, next) => {
+    try {
+        const validatedData = await patientSchema.parseAsync(req.body);
+        // Here you would typically save to a database
+        res.status(201).json({
+            status: 'success',
+            message: 'Check-up appointment created',
+            data: validatedData
+        });
+    } catch (error) {
+        next(error);
     }
-    res.send('<h1>Health Checkup</h1>');
 });
 
-app.get('/doctors', (req, res) => {
-    res.send('<h1>Doctors</h1>');
+// API Routes
+app.get('/api/doctors', (req, res) => {
+    res.json(doctors);
 });
 
-app.get('/patients', (req, res) => {
-    res.send('<h1>Patients</h1>');
+app.post('/api/appointments', (req, res) => {
+    const { doctorId, date } = req.body;
+    const doctor = doctors.find(d => d.id === doctorId);
+    
+    if (!doctor) {
+        return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    const appointment = {
+        id: appointments.length + 1,
+        doctorId,
+        doctorName: doctor.name,
+        date,
+        createdAt: new Date()
+    };
+
+    appointments.push(appointment);
+    res.status(201).json({
+        status: 'success',
+        message: 'Appointment booked successfully',
+        data: appointment
+    });
 });
 
-app.get('/appointments', (req, res) => {
-    res.send('<h1>Appointments</h1>');
+app.get('/api/appointments', (req, res) => {
+    res.json(appointments);
 });
 
-app.get('/contact', (req, res) => {
-    const contact = `
-        <h1>Contact</h1>
-        <p>Phone: 1234567890</p>
-        <p>Email: node-hospital@npm.com</p>
-    `;
-    res.send(contact);
-});
+// Error handling middleware (should be last)
+app.use(errorHandler);
 
-app.get('/about', (req, res) => {
-    const about = `
-        <h1>About US</h1>
-        <p>Our Hospital is a multi-speciality hospital with world-class facilities and experienced doctors.</p>
-    `;
-    res.send(about);
-});
-
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

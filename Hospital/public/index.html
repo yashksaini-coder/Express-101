@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Hospital Management System</h1>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#check-up">Health Check-up</a></li>
+                <li><a href="#doctors">Doctors</a></li>
+                <li><a href="#appointments">Appointments</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="message"></div>
+
+        <section id="home" class="card">
+            <h2>Welcome to Our Hospital</h2>
+            <p>We provide world-class healthcare services with experienced professionals.</p>
+        </section>
+
+        <section id="check-up" class="card">
+            <h2>Health Check-up Form</h2>
+            <form id="checkupForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="symptoms">Symptoms</label>
+                    <textarea id="symptoms" name="symptoms" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn">Submit</button>
+            </form>
+        </section>
+
+        <section id="doctors" class="card">
+            <h2>Our Doctors</h2>
+            <div id="doctorsList"></div>
+        </section>
+
+        <section id="appointments" class="card">
+            <h2>Your Appointments</h2>
+            <div id="appointmentsList"></div>
+        </section>
+
+        <section id="contact" class="card">
+            <h2>Contact Us</h2>
+            <p>Phone: 1234567890</p>
+            <p>Email: hospital@example.com</p>
+            <p>Address: 123 Healthcare Street, Medical City</p>
+        </section>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

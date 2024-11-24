@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Check-up - Hospital Management System</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Hospital Management System</h1>
+            <ul class="nav-links">
+                <li><a href="/home.html">Home</a></li>
+                <li><a href="/check-up.html" class="active">Health Check-up</a></li>
+                <li><a href="/doctors.html">Doctors</a></li>
+                <li><a href="/appointments.html">Appointments</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="message"></div>
+
+        <section class="check-up-intro card">
+            <h2>Health Check-up Services</h2>
+            <p>Regular health check-ups are essential for maintaining good health and detecting potential issues early.</p>
+            
+            <div class="packages">
+                <div class="package-card">
+                    <h3>Basic Check-up</h3>
+                    <ul>
+                        <li>Blood Pressure Check</li>
+                        <li>BMI Measurement</li>
+                        <li>Basic Blood Test</li>
+                        <li>General Physical Examination</li>
+                    </ul>
+                    <p class="price">$99</p>
+                    <button class="btn" onclick="selectPackage('basic')">Select Package</button>
+                </div>
+                <div class="package-card featured">
+                    <h3>Comprehensive Check-up</h3>
+                    <ul>
+                        <li>All Basic Check-up Tests</li>
+                        <li>Complete Blood Count</li>
+                        <li>Diabetes Screening</li>
+                        <li>Cholesterol Test</li>
+                        <li>ECG</li>
+                    </ul>
+                    <p class="price">$199</p>
+                    <button class="btn" onclick="selectPackage('comprehensive')">Select Package</button>
+                </div>
+                <div class="package-card">
+                    <h3>Executive Check-up</h3>
+                    <ul>
+                        <li>All Comprehensive Tests</li>
+                        <li>Cancer Screening</li>
+                        <li>Thyroid Function Test</li>
+                        <li>Vitamin D Test</li>
+                        <li>Stress Test</li>
+                    </ul>
+                    <p class="price">$399</p>
+                    <button class="btn" onclick="selectPackage('executive')">Select Package</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="check-up-form card">
+            <h2>Book Your Health Check-up</h2>
+            <form id="checkupForm">
+                <div class="form-group">
+                    <label for="package">Selected Package</label>
+                    <input type="text" id="package" name="package" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age" required min="1" max="150">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}">
+                </div>
+                <div class="form-group">
+                    <label for="preferred-date">Preferred Date</label>
+                    <input type="date" id="preferred-date" name="preferred-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="symptoms">Any Specific Concerns or Symptoms</label>
+                    <textarea id="symptoms" name="symptoms" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" required>
+                        I agree to the terms and conditions
+                    </label>
+                </div>
+                <button type="submit" class="btn">Book Check-up</button>
+            </form>
+        </section>
+
+        <section class="faq card">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <h3>How long does a check-up take?</h3>
+                    <p>Basic check-ups typically take 1-2 hours, while comprehensive and executive check-ups may take 3-4 hours.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Do I need to fast before the check-up?</h3>
+                    <p>Yes, for most blood tests, 8-12 hours of fasting is required. Water is allowed.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>When will I get my results?</h3>
+                    <p>Basic test results are available within 24 hours. Some specialized tests may take 2-3 days.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+    <script>
+        function selectPackage(type) {
+            const packageInput = document.getElementById('package');
+            packageInput.value = type.charAt(0).toUpperCase() + type.slice(1) + ' Package';
+            document.querySelector('.check-up-form').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

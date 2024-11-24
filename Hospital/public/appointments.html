@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - Hospital Management System</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>Hospital Management System</h1>
+            <ul class="nav-links">
+                <li><a href="/home.html">Home</a></li>
+                <li><a href="/check-up.html">Health Check-up</a></li>
+                <li><a href="/doctors.html">Doctors</a></li>
+                <li><a href="/appointments.html" class="active">Appointments</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="message"></div>
+
+        <section class="appointments-header card">
+            <h2>My Appointments</h2>
+            <div class="appointments-actions">
+                <button class="btn" onclick="window.location.href='/doctors.html'">Book New Appointment</button>
+                <div class="appointments-filter">
+                    <select id="statusFilter" onchange="filterAppointments()">
+                        <option value="all">All Appointments</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="past">Past</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="appointments-list card">
+            <div class="appointment-tabs">
+                <button class="tab-btn active" onclick="showTab('upcoming')">Upcoming</button>
+                <button class="tab-btn" onclick="showTab('past')">Past</button>
+                <button class="tab-btn" onclick="showTab('cancelled')">Cancelled</button>
+            </div>
+
+            <div id="appointmentsList">
+                <!-- Appointments will be loaded dynamically -->
+            </div>
+        </section>
+
+        <div id="rescheduleModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Reschedule Appointment</h2>
+                <form id="rescheduleForm">
+                    <input type="hidden" id="appointmentId" name="appointmentId">
+                    <div class="form-group">
+                        <label for="newDate">New Date</label>
+                        <input type="date" id="newDate" name="newDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newTime">New Time</label>
+                        <select id="newTime" name="newTime" required>
+                            <option value="">Select Time</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reason">Reason for Rescheduling</label>
+                        <textarea id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Reschedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+    <script>
+        let currentTab = 'upcoming';
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadAppointments();
+        }
+
+        function loadAppointments() {
+            fetch(`/api/appointments?status=${currentTab}`)
+                .then(response => response.json())
+                .then(appointments => {
+                    const appointmentsList = document.getElementById('appointmentsList');
+                    if (appointments.length === 0) {
+                        appointmentsList.innerHTML = '<p class="no-appointments">No appointments found.</p>';
+                        return;
+                    }
+
+                    appointmentsList.innerHTML = appointments.map(appointment => `
+                        <div class="appointment-card ${appointment.status}">
+                            <div class="appointment-info">
+                                <h3>Dr. ${appointment.doctorName}</h3>
+                                <p>Date: ${new Date(appointment.date).toLocaleDateString()}</p>
+                                <p>Time: ${appointment.time}</p>
+                                <p>Status: ${appointment.status}</p>
+                            </div>
+                            <div class="appointment-actions">
+                                ${appointment.status === 'upcoming' ? `
+                                    <button class="btn" onclick="rescheduleAppointment('${appointment.id}')">Reschedule</button>
+                                    <button class="btn btn-danger" onclick="cancelAppointment('${appointment.id}')">Cancel</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    showMessage('error', 'Failed to load appointments');
+                });
+        }
+
+        function rescheduleAppointment(appointmentId) {
+            document.getElementById('appointmentId').value = appointmentId;
+            document.getElementById('rescheduleModal').style.display = 'block';
+        }
+
+        function cancelAppointment(appointmentId) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                fetch(`/api/appointments/${appointmentId}/cancel`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showMessage('success', 'Appointment cancelled successfully');
+                    loadAppointments();
+                })
+                .catch(error => {
+                    showMessage('error', 'Failed to cancel appointment');
+                });
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAppointments();
+
+            // Modal handling
+            const modal = document.getElementById('rescheduleModal');
+            const closeBtn = document.querySelector('.close');
+
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            // Reschedule form handling
+            document.getElementById('rescheduleForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = {
+                    appointmentId: this.appointmentId.value,
+                    newDate: this.newDate.value,
+                    newTime: this.newTime.value,
+                    reason: this.reason.value
+                };
+
+                fetch('/api/appointments/reschedule', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    modal.style.display = "none";
+                    showMessage('success', 'Appointment rescheduled successfully');
+                    loadAppointments();
+                })
+                .catch(error => {
+                    showMessage('error', 'Failed to reschedule appointment');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
